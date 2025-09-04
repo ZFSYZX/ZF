@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>珠峰实验学校</title>
+    <title>珠峰实验学校非官方网站</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -181,6 +181,12 @@
             position: relative;
         }
         
+        .map-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
         .map-placeholder {
             text-align: center;
             color: #666;
@@ -257,29 +263,35 @@
             
             <div class="gallery">
                 <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80" alt="校园全景">
+                    <!-- 校园全景图片 -->
+                    <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBERNouc5lsoI9PacpcyUVk3kl9bZ0jQACLxoAAi5q0VVLoBDCZbBjpjYE.jpg" alt="校园全景">
                     <div class="gallery-caption">校园全景</div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80" alt="现代化教室">
+                    <!-- 校园全景的下一个位置 -->
+                    <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBERRouc7dTZm6xuA2v3eDzzs1Croa9AACMRoAAi5q0VUWYNfefr6ybTYE.jpg" alt="现代化教室">
                     <div class="gallery-caption">现代化教室</div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80" alt="图书馆">
-                    <div class="gallery-caption">图书馆</div>
+                    <!-- 校园全景的下面的下面的位置 -->
+                    <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBERVouc85BkvXeBPRvdKxbN1zmHzk3wACMxoAAi5q0VWaiJ8JsGlbJzYE.jpg" alt="图书馆">
+                    <div class="gallery-caption">学校氛围</div>
+                </div>
+                <div class="gallery-item">
+                    <!-- 倒数第一的图片位置 -->
+                    <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBERZouc-B3aoR7Fov67_K_WT2L038ZgACNBoAAi5q0VXRI8p5oE5NgzYE.jpg" alt="学生活动">
+                    <div class="gallery-caption">学生活动</div>
                 </div>
             </div>
         </div>
         
         <div class="card">
             <h2 class="card-title"><i class="fas fa-map-marker-alt"></i> 学校地址</h2>
-            <p>广东省珠海市斗门区白蕉镇珠峰大道</p>
+            <p>广东省珠海市斗门区珠峰大道</p>
             
             <div class="map-container">
-                <div class="map-placeholder">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <p>珠峰实验学校地理位置示意图</p>
-                </div>
+                <!-- 替换为新的地理位置图片 -->
+                <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBERdoudGpNOL0j4tYuF7qvNlZb9xkFAACNxoAAi5q0VUh2BbjnHAKXjYE.jpg" alt="珠峰实验学校地理位置">
             </div>
             
             <div class="info-grid" style="margin-top: 20px;">
@@ -287,7 +299,7 @@
                     <i class="fas fa-bus"></i>
                     <div>
                         <h3>公共交通</h3>
-                        <p>可乘坐K6、K7路公交车至"珠峰实验学校"站</p>
+                        <p>可乘坐303,308,B37,B38路公交车至"珠峰实验学校"站或者"理工学校"附近</p>
                     </div>
                 </div>
                 <div class="info-item">
@@ -315,7 +327,7 @@
         
         <footer>
             <p>© 2025 珠峰实验学校 学生版权所有</p>
-            <p>学生自主创建 | 联系邮箱: 3131521660@qq.com</p>
+            <p>学生自主创建 | 联系/建议邮箱: 3131521660@qq.com</p>
         </footer>
     </div>
 
@@ -338,4 +350,52 @@
         });
     </script>
 </body>
-</html>
+</html>上一次更新:2025年9月5日2:09PM-v1.3版本-
+<!-- 在body底部添加 -->
+<audio id="bgMusic" autoplay loop>
+    <source src="http://music.163.com/song/media/outer/url?id=2614435703.mp3" type="audio/mpeg">
+    您的浏览器不支持音频播放
+</audio>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const audio = document.getElementById('bgMusic');
+    audio.volume = 0.3; // 设置音量（30%）
+    
+    // 用户交互后尝试播放（解决浏览器限制）
+    document.body.addEventListener('click', function() {
+        if (audio.paused) {
+            audio.play().catch(e => console.log('播放失败:', e));
+        }
+    });
+    
+    // 尝试自动播放
+    audio.play().catch(e => {
+        console.log('自动播放被阻止，需要用户交互');
+    });
+});
+</script>
+
+<!-- 可选：添加音乐控制按钮 -->
+<div style="position:fixed; bottom:20px; right:20px; z-index:1000; background:rgba(0,0,0,0.7); color:white; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="toggleMusic()">
+    <i id="musicIcon" class="fas fa-volume-up"></i>
+</div>
+
+<script>
+// 音乐控制功能
+let musicEnabled = true;
+
+function toggleMusic() {
+    const audio = document.getElementById('bgMusic');
+    const icon = document.getElementById('musicIcon');
+    
+    if (musicEnabled) {
+        audio.pause();
+        icon.className = 'fas fa-volume-mute';
+    } else {
+        audio.play();
+        icon.className = 'fas fa-volume-up';
+    }
+    musicEnabled = !musicEnabled;
+}
+</script>
