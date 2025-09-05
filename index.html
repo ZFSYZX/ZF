@@ -350,7 +350,7 @@
         });
     </script>
 </body>
-</html>上一次更新:2025年9月5日2:09PM-v1.3版本-
+</html>上一次更新:2025年9月5日20:39PM-v1.4版本-融合音乐搜索器
 <!-- 在body底部添加 -->
 <audio id="bgMusic" autoplay loop>
     <source src="http://music.163.com/song/media/outer/url?id=2614435703.mp3" type="audio/mpeg">
@@ -399,3 +399,673 @@ function toggleMusic() {
     musicEnabled = !musicEnabled;
 }
 </script>
+    <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ZF顾少音乐开源网站</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="keywords" content="音乐搜索,音乐搜索器,音乐试听,音乐在线听,网易云音乐,QQ音乐,酷狗音乐,酷我音乐,虾米音乐,百度音乐,一听音乐,咪咕音乐,荔枝FM,蜻蜓FM,喜马拉雅FM,全民K歌,5sing原创翻唱音乐">
+    <meta name="description" content="ZF特制多站合一音乐搜索解决方案，可搜索试听网易云音乐、QQ音乐、酷狗音乐、酷我音乐、虾米音乐、百度音乐、一听音乐、咪咕音乐、荔枝FM、蜻蜓FM、喜马拉雅FM、全民K歌、5sing原创翻唱音乐。">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="音乐搜索器">
+    <meta name="application-name" content="音乐搜索器">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="static/img/apple-touch-icon.png">
+    <!-- 移除原有CSS，使用iOS风格CSS -->
+    <link rel="stylesheet" href="static/css/ios-style.css?v1.0">
+    <style>
+        /* iOS风格样式 */
+        :root {
+            --ios-primary: #007AFF;
+            --ios-secondary: #5856D6;
+            --ios-background: #F2F2F7;
+            --ios-surface: #FFFFFF;
+            --ios-border: #C6C6C8;
+            --ios-text-primary: #000000;
+            --ios-text-secondary: #8E8E93;
+            --ios-success: #34C759;
+            --ios-danger: #FF3B30;
+            --ios-blur: rgba(242, 242, 247, 0.8);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --ios-background: #000000;
+                --ios-surface: #1C1C1E;
+                --ios-border: #38383A;
+                --ios-text-primary: #FFFFFF;
+                --ios-text-secondary: #8E8E93;
+                --ios-blur: rgba(28, 28, 30, 0.8);
+            }
+        }
+        
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+            background-color: var(--ios-background);
+            color: var(--ios-text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.4;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .about {
+            padding: 2rem 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .about-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--ios-primary), var(--ios-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .about p {
+            text-align: center;
+            color: var(--ios-text-secondary);
+            margin-top: 0;
+        }
+        
+        hr {
+            border: none;
+            height: 1px;
+            background-color: var(--ios-border);
+            margin: 2rem 0;
+            opacity: 0.3;
+        }
+        
+        /* 表单样式 */
+        #j-validator {
+            background-color: var(--ios-surface);
+            border-radius: 14px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .music-tabs {
+            display: flex;
+            background-color: rgba(120, 120, 128, 0.12);
+            border-radius: 9px;
+            padding: 3px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .music-tabs li {
+            flex: 1;
+            text-align: center;
+            border-radius: 7px;
+        }
+        
+        .music-tabs li a {
+            color: var(--ios-text-primary);
+            padding: 0.5rem;
+            display: block;
+            font-size: 0.9rem;
+            border-radius: 7px;
+        }
+        
+        .music-tabs li.am-active {
+            background-color: var(--ios-surface);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+        }
+        
+        .music-tabs li.am-active a {
+            font-weight: 600;
+        }
+        
+        #j-input {
+            background-color: rgba(120, 120, 128, 0.12);
+            border: none;
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 1rem;
+            color: var(--ios-text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        #j-input:focus {
+            outline: none;
+            background-color: rgba(120, 120, 128, 0.18);
+        }
+        
+        .music-type {
+            margin-bottom: 1.5rem;
+        }
+        
+        .music-type label {
+            margin: 0.3rem;
+            padding: 0.5rem 1rem;
+            background-color: rgba(120, 120, 128, 0.12);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+        
+        .music-type input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: var(--ios-primary);
+        }
+        
+        #j-submit {
+            background-color: var(--ios-primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        #j-submit:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        #j-submit:active {
+            transform: translateY(0);
+        }
+        
+        /* 结果区域样式 */
+        #j-main {
+            background-color: var(--ios-surface);
+            border-radius: 14px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-top: 1.5rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        #j-back {
+            background-color: var(--ios-success);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            display: block;
+        }
+        
+        .am-input-group {
+            margin-bottom: 1rem;
+        }
+        
+        .am-input-group-label {
+            background-color: rgba(120, 120, 128, 0.12);
+            border: none;
+            color: var(--ios-text-secondary);
+            border-radius: 8px 0 0 8px;
+        }
+        
+        .am-form-field {
+            background-color: rgba(120, 120, 128, 0.12);
+            border: none;
+            color: var(--ios-text-primary);
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .am-btn-default {
+            background-color: rgba(120, 120, 128, 0.12);
+            border: none;
+            color: var(--ios-text-primary);
+            border-radius: 0 8px 8px 0;
+        }
+        
+        /* 播放器样式 */
+        #j-player {
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+        
+        /* 帮助区域样式 */
+        .music-tips {
+            background-color: var(--ios-surface);
+            border-radius: 14px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-top: 1.5rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .music-tips h4 {
+            margin-top: 0;
+            color: var(--ios-text-primary);
+        }
+        
+        .music-tips p, .music-tips li {
+            color: var(--ios-text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .music-tips code {
+            background-color: rgba(120, 120, 128, 0.12);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        .music-tips blockquote {
+            border-left: 4px solid var(--ios-primary);
+            padding-left: 1rem;
+            margin-left: 0;
+        }
+        
+        .music-more {
+            text-align: center;
+            color: var(--ios-primary);
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        /* 底部样式 */
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--ios-text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .footer a {
+            color: var(--ios-primary);
+            text-decoration: none;
+        }
+        
+        /* 灵动岛样式 */
+        #dynamic-island {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 130px;
+            height: 37px;
+            background-color: #000;
+            border-radius: 24px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.85rem;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        #dynamic-island.compact {
+            width: 130px;
+        }
+        
+        #dynamic-island.expanded {
+            width: 250px;
+            height: 50px;
+        }
+        
+        #dynamic-island .island-content {
+            padding: 0 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px) translateX(-50%); }
+            to { opacity: 1; transform: translateY(0) translateX(-50%); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 640px) {
+            .about {
+                padding: 1rem;
+            }
+            
+            .music-type label {
+                display: inline-block;
+                margin: 0.2rem;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            
+            #dynamic-island.compact {
+                width: 110px;
+                height: 32px;
+                font-size: 0.75rem;
+            }
+            
+            #dynamic-island.expanded {
+                width: 200px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!--[if lte IE 9]>
+        <script type="text/javascript">
+            (function(){
+                var t = '你的浏览器也太挫了吧！大佬换一个噻！';
+                document.body.innerHTML = t;
+                document.body.style.fontSize = '66px';
+                document.body.style.textAlign = 'center';
+                document.body.style.background = '#000';
+                document.body.style.color = '#fff';
+                if (prompt('输入代号 666666 销毁此电脑: ', '') === '666666') {
+                    alert('拜拜了您呢~')
+                } else {
+                    alert('总感觉哪里不对');
+                }
+                window.open('', '_self', '');
+                window.close();
+            })();
+        </script>
+    <![endif]-->
+    
+    <!-- 灵动岛 -->
+    <div id="dynamic-island" class="compact">
+        <div class="island-content">顾少音乐</div>
+    </div>
+    
+    <section class="about">
+        <div class="am-container am-margin-vertical-xl">
+            <header class="am-padding-vertical">
+                <h2 class="about-title about-color">ZF顾少音乐🎵</h2>
+                <p class="am-text-center">多站合一音乐搜索</p>
+            </header>
+            <hr>
+            <div class="am-u-lg-12 am-padding-vertical">
+                <form id="j-validator" class="am-form am-margin-bottom-lg" method="post">
+                    <div class="am-u-md-12 am-u-sm-centered">
+                        <ul id="j-nav" class="am-nav am-nav-pills am-nav-justify am-margin-bottom music-tabs">
+                            <li class="am-active" data-filter="name">
+                                <a>音乐名称</a>
+                            </li>
+                            <li data-filter="id">
+                                <a>音乐 ID</a>
+                            </li>
+                            <li data-filter="url">
+                                <a>音乐地址</a>
+                            </li>
+                        </ul>
+                        <div class="am-form-group">
+                            <input id="j-input" data-filter="name" class="am-form-field am-input-lg am-text-center am-radius" placeholder="例如: 不要说话 陈奕迅" data-am-loading="{loadingText: ' '}" pattern="^.+$" required>
+                            <div class="am-alert am-alert-danger am-animation-shake"></div>
+                        </div>
+                        <div id="j-type" class="am-form-group am-text-center music-type">
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="netease" data-am-ucheck checked>
+                                <span>网易</span>
+                            </label>
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="qq" data-am-ucheck>
+                                <span>ＱＱ</span>
+                            </label>
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="kugou" data-am-ucheck>
+                                <span>酷狗</span>
+                            </label>
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="kuwo" data-am-ucheck>
+                                <span>酷我</span>
+                            </label>
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="baidu" data-am-ucheck>
+                                <span>千千</span>
+                            </label>
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="1ting" data-am-ucheck>
+                                <span>一听</span>
+                            </label>
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="migu" data-am-ucheck>
+                                <span>咪咕</span>
+                            </label>
+                            <br />
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="lizhi" data-am-ucheck>
+                                <span>荔枝</span>
+                            </label>
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="qingting" data-am-ucheck>
+                                <span>蜻蜓</span>
+                            </label>
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="ximalaya" data-am-ucheck>
+                                <span>喜马拉雅</span>
+                            </label>
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="5singyc" data-am-ucheck>
+                                <span>5sing原创</span>
+                            </label>
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="5singfc" data-am-ucheck>
+                                <span>5sing翻唱</span>
+                            </label>
+                            <label class="am-radio-inline">
+                                <input type="radio" name="music_type" value="kg" data-am-ucheck>
+                                <span>全民K歌</span>
+                            </label>
+                        </div>
+                        <button id="j-submit" type="submit" class="am-btn am-btn-primary am-btn-lg am-btn-block am-radius" data-am-loading="{spinner: 'cog', loadingText: '正在搜索相关音乐...', resetText: 'Get &#x221A;'}">搜索 &#x221A;</button>
+                    </div>
+                </form>
+                <form id="j-main" class="am-form am-u-md-12 am-u-sm-centered music-main">
+                    <a type="button" id="j-back" class="am-btn am-btn-success am-btn-lg am-btn-block am-radius am-margin-bottom-lg"> &#x221A; 返回继续 <i class="am-icon-reply am-icon-fw"></i></a>
+                    <div class="am-g am-margin-bottom-sm">
+                        <div class="am-u-lg-6">
+                            <div class="am-input-group am-input-group-sm am-margin-bottom-sm" data-am-popover="{content: '音乐地址', trigger: 'hover'}">
+                                <span class="am-input-group-label"><i class="am-icon-link am-icon-fw"></i></span>
+                                <input id="j-link" class="am-form-field" readonly>
+                                <span class="am-input-group-btn">
+                                    <a id="j-link-btn" class="am-btn am-btn-default" target="_blank">
+                                        <i class="am-icon-external-link"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="am-u-lg-6">
+                            <div class="am-input-group am-input-group-sm am-margin-bottom-sm" data-am-popover="{content: '音乐链接', trigger: 'hover'}">
+                                <span class="am-input-group-label"><i class="am-icon-music am-icon-fw"></i></span>
+                                <input id="j-src" class="am-form-field" readonly>
+                                <span class="am-input-group-btn">
+                                    <a id="j-src-btn" class="am-btn am-btn-default" target="_blank">
+                                        <i id="j-src-btn-icon" class="am-icon-external-link"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="am-g">
+                        <div class="am-u-lg-6">
+                            <div class="am-input-group am-input-group-sm am-margin-bottom-sm" data-am-popover="{content: '音乐ID', trigger: 'hover'}">
+                                <span class="am-input-group-label"><i class="am-icon-list-ol am-icon-fw"></i></span>
+                                <input id="j-songid" class="am-form-field" readonly>
+                            </div>
+                        </div>
+                        <div class="am-u-lg-6">
+                            <div class="am-input-group am-input-group-sm am-margin-bottom-sm" data-am-popover="{content: '音乐歌词', trigger: 'hover'}">
+                                <span class="am-input-group-label"><i class="am-icon-file-text-o am-icon-fw"></i></span>
+                                <input id="j-lrc" class="am-form-field" readonly>
+                                <span class="am-input-group-btn">
+                                    <a id="j-lrc-btn" class="am-btn am-btn-default" target="_blank">
+                                        <i id="j-lrc-btn-icon" class="am-icon-external-link"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="am-g">
+                        <div class="am-u-lg-6">
+                            <div class="am-input-group am-input-group-sm am-margin-bottom-sm" data-am-popover="{content: '音乐名称', trigger: 'hover'}">
+                                <span class="am-input-group-label"><i class="am-icon-tag am-icon-fw"></i></span>
+                                <input id="j-name" class="am-form-field" readonly>
+                            </div>
+                        </div>
+                        <div class="am-u-lg-6">
+                            <div class="am-input-group am-input-group-sm am-margin-bottom-sm" data-am-popover="{content: '音乐作者', trigger: 'hover'}">
+                                <span class="am-input-group-label"><i class="am-icon-user am-icon-fw"></i></span>
+                                <input id="j-author" class="am-form-field" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="j-show" class="am-margin-vertical">
+                        <div id="j-player" class="aplayer"></div>
+                    </div>
+                </form>
+                <div class="am-u-md-12 am-u-sm-centered am-margin-vertical music-tips">
+                    <h4>帮助：</h4>
+                    <p><b>标红</b> 为 <strong>音乐 ID</strong>，<u>下划线</u> 表示 <strong>音乐地址</strong></p>
+                    <ul>
+                        <li>蜻蜓 FM 的音乐 ID 需要使用 <code>| (管道符)</code> 组合，例如 <code>158696|5266259</code></li>
+                    </ul>
+                    <blockquote id="j-quote" class="music-overflow">
+                        <p><span>网易：</span><u>https://music.163.com/#/song?id=<b>25906124</b></u></p>
+                        <p><span>ＱＱ：</span><u>https://y.qq.com/n/yqq/song/<b>002B2EAA3brD5b</b>.html</u></p>
+                        <p><span>酷狗：</span><u>http://www.kugou.com/song/#hash=<b>08228af3cb404e8a4e7e9871bf543ff6</b></u></p>
+                        <p><span>酷我：</span><u>https://www.kuwo.cn/play_detail/<b>175264544</b>/</u></p>
+                        <p><span>千千：</span><u>https://music.taihe.com/song=<b>266069</b></u></p>
+                        <p><span>一听：</span><u>https://www.1ting.com/player/b6/player_<b>357838</b>.html</u></p>
+                        <p><span>咪咕：</span><u>https://music.migu.cn/v3/music/song/<b>477803</b></u></p>
+                        <p><span>荔枝：</span><u>https://www.lizhi.fm/1947925/<b>2498707770886461446</b></u></p>
+                        <p><span>蜻蜓：</span><u>https://www.qingting.fm/channels/<b>158696</b>/programs/<b>5266259</b></u></p>
+                        <p><span>喜马拉雅：</span><u>https://www.ximalaya.com/51701370/sound/<b>24755731</b></u></p>
+                        <p><span>5sing原创：</span><u>http://5sing.kugou.com/yc/<b>3082899</b>.html</u></p>
+                        <p><span>5sing翻唱：</span><u>http://5sing.kugou.com/fc/<b>14369766</b>.html</u></p>
+                        <p><span>全民K歌：</span>只支持根据ID或地址解析，不支持搜索名称</p>
+                    </blockquote>
+                    <div id="j-more" class="music-more">查看更多</div>
+                </div>
+            </div>
+        </div>
+        <div class="am-popup" id="copr-info">
+            <div class="am-popup-inner">
+                <div class="am-popup-hd">
+                    <h4 class="am-popup-title">免责声明</h4>
+                    <span data-am-modal-close class="am-close">&times;</span>
+                </div>
+                <div class="am-popup-bd">
+                    <p>本站音频文件来自各网站接口，本站不会修改任何音频文件</p>
+                    <p>音频版权来自各网站，本站只提供数据查询服务，不提供任何音频存储和贩卖服务</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+        <p class="am-text-sm">v1.0&nbsp;&copy;&nbsp;2025&nbsp;<a href="javascript:void(0)" data-am-modal="{target: '#copr-info'}">免责声明</a></p>
+    </footer>
+    <script src="//cdn.staticfile.org/jquery/1.12.4/jquery.min.js">远方</script>
+    <script src="//cdn.staticfile.org/amazeui/2.3.0/js/amazeui.min.js"></script>
+    <script src="//cdn.staticfile.org/aplayer/1.6.0/APlayer.min.js"></script>
+    <script src="//cdn.staticfile.org/Base64/1.0.1/base64.min.js"></script>
+    <script src="static/js/music.js?v1.0"></script>
+    <script>
+        // 灵动岛功能实现
+        $(document).ready(function() {
+            // 创建灵动岛
+            const island = $('#dynamic-island');
+            
+            // 页面加载时显示灵动岛
+            setTimeout(() => {
+                island.addClass('fade-in');
+            }, 500);
+            
+            // 搜索表单提交时
+            $('#j-validator').on('submit', function() {
+                island.removeClass('compact').addClass('expanded');
+                island.find('.island-content').html('正在搜索音乐...');
+                island.addClass('pulse');
+                
+                // 模拟搜索完成后恢复
+                setTimeout(() => {
+                    island.removeClass('expanded pulse').addClass('compact');
+                    island.find('.island-content').html('搜索完成');
+                    
+                    // 2秒后恢复原始文本
+                    setTimeout(() => {
+                        island.find('.island-content').html('远方音乐搜索');
+                    }, 2000);
+                }, 2000);
+            });
+            
+            // 显示结果时
+            $(document).on('click', '#j-back', function() {
+                island.removeClass('compact').addClass('expanded');
+                island.find('.island-content').html('返回搜索界面');
+                island.addClass('pulse');
+                
+                // 2秒后恢复
+                setTimeout(() => {
+                    island.removeClass('expanded pulse').addClass('compact');
+                    island.find('.island-content').html('远方音乐搜索');
+                }, 2000);
+            });
+            
+            // 页面滚动时隐藏/显示灵动岛
+            let lastScrollTop = 0;
+            $(window).scroll(function() {
+                const st = $(this).scrollTop();
+                if (st > lastScrollTop && st > 100) {
+                    // 向下滚动，隐藏灵动岛
+                    island.css('opacity', '0');
+                } else {
+                    // 向上滚动，显示灵动岛
+                    island.css('opacity', '1');
+                }
+                lastScrollTop = st;
+            });
+            
+            // 点击查看更多
+            $('#j-more').on('click', function() {
+                $('#j-quote').toggleClass('music-overflow');
+                $(this).text($(this).text() === '查看更多' ? '收起' : '查看更多');
+            });
+            
+            // 初始化iOS风格交互
+            $('input, button, a').on('touchstart', function() {
+                $(this).addClass('active');
+            }).on('touchend', function() {
+                $(this).removeClass('active');
+            });
+        });
+    </script>
+</body>
+</html>
