@@ -1,9 +1,9 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>珠峰实验学校非官方网站</title>
+    <title>NewsHub - 简约新闻平台</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -12,390 +12,836 @@
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        
+
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: #333;
             line-height: 1.6;
-            padding: 20px;
             min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
         }
-        
+
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            padding: 40px 20px;
-            margin-bottom: 30px;
-        }
-        
-        h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #0066cc, #0099ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            color: #666;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .card {
+            width: 100%;
+            max-width: 800px;
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
-        }
-        
-        .card-title {
-            font-size: 1.5rem;
-            color: #0066cc;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .card-title i {
-            margin-right: 10px;
-            font-size: 1.3rem;
-        }
-        
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .gallery-item {
-            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            height: 200px;
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            margin-top: 40px;
         }
-        
-        .gallery-item:hover {
-            transform: scale(1.03);
-        }
-        
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-        
-        .gallery-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px;
-            font-size: 0.9rem;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .gallery-item:hover .gallery-caption {
-            transform: translateY(0);
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .info-item {
+
+        header {
             background: rgba(255, 255, 255, 0.6);
-            padding: 15px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .info-item i {
-            font-size: 1.8rem;
-            color: #0066cc;
-            margin-right: 15px;
-            min-width: 40px;
+            padding: 25px;
             text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
         }
-        
-        .feature-list {
-            list-style-type: none;
-            margin-top: 15px;
+
+        h1 {
+            font-weight: 700;
+            font-size: 2.2rem;
+            background: linear-gradient(45deg, #007AFF, #5856D6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
         }
-        
-        .feature-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            align-items: center;
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
         }
-        
-        .feature-list li:last-child {
-            border-bottom: none;
+
+        .news-container {
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
         }
-        
-        .feature-list i {
-            color: #4cd964;
-            margin-right: 10px;
+
+        .news-item {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            position: relative;
         }
-        
-        .map-container {
-            height: 300px;
-            border-radius: 16px;
-            overflow: hidden;
-            margin-top: 20px;
-            background: #e9e9e9;
+
+        .news-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .news-item.active {
+            background: rgba(255, 255, 255, 0.9);
+            border-left: 4px solid #007AFF;
+            transform: scale(1.01);
+        }
+
+        .news-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #222;
+        }
+
+        .news-content {
+            color: #444;
+            display: none;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            margin-top: 10px;
+        }
+
+        .news-item.active .news-content {
+            display: block;
+        }
+
+        .news-date {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        .admin-panel {
+            position: fixed;
+            right: -320px;
+            top: 0;
+            width: 320px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+            transition: right 0.4s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .admin-panel.active {
+            right: 0;
+        }
+
+        .admin-toggle {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #007AFF, #5856D6);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+            z-index: 900;
+            transition: transform 0.3s ease;
         }
-        
-        .map-container img {
+
+        .admin-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .admin-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        input, textarea {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            transition: border-color 0.3s;
         }
-        
-        .map-placeholder {
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+        }
+
+        button {
+            background: linear-gradient(45deg, #007AFF, #5856D6);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .empty-state {
             text-align: center;
-            color: #666;
+            padding: 40px 20px;
+            color: #888;
         }
-        
-        .map-placeholder i {
+
+        .empty-state i {
             font-size: 3rem;
             margin-bottom: 15px;
-            color: #0066cc;
+            opacity: 0.5;
         }
-        
+
         footer {
             text-align: center;
-            padding: 30px 0;
-            margin-top: 40px;
+            padding: 20px;
             color: #666;
             font-size: 0.9rem;
+            margin-top: 30px;
         }
-        
-        @media (max-width: 768px) {
+
+        /* 标签页样式 */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .tab.active {
+            color: #007AFF;
+            border-bottom: 2px solid #007AFF;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 新闻管理列表 */
+        .news-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .manage-news-item {
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.03);
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .manage-news-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .news-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+            gap: 10px;
+        }
+
+        .btn-edit {
+            background: #FF9500;
+        }
+
+        .btn-delete {
+            background: #FF3B30;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            width: auto;
+        }
+
+        .btn-verify {
+            margin-top: 10px;
+            background: #34C759;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 时间显示样式 */
+        .time-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: #444;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 面板遮罩 */
+        .panel-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 800;
+        }
+
+        .panel-overlay.active {
+            display: block;
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 122, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 122, 255, 0.5);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 16px;
+                margin-top: 20px;
+            }
+            
+            header {
+                padding: 20px 15px;
+            }
+            
             h1 {
-                font-size: 2.2rem;
+                font-size: 1.8rem;
             }
             
-            .gallery {
-                grid-template-columns: 1fr;
+            .admin-panel {
+                width: 280px;
+                right: -280px;
             }
             
-            .info-grid {
-                grid-template-columns: 1fr;
+            .time-display {
+                top: 10px;
+                left: 10px;
+                font-size: 0.8rem;
             }
         }
     </style>
 </head>
 <body>
+    <div class="time-display">
+        <i class="far fa-clock"></i>
+        <span id="currentTime">加载中...</span>
+    </div>
+
+    <div class="admin-toggle" id="adminToggle">
+        <i class="fas fa-lock"></i>
+    </div>
+
+    <div class="panel-overlay" id="panelOverlay"></div>
+
+    <div class="admin-panel" id="adminPanel">
+        <h2>管理员面板</h2>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="publish">发布新闻</div>
+            <div class="tab" data-tab="manage">管理新闻</div>
+            <div class="tab" data-tab="settings">设置</div>
+        </div>
+        
+        <div class="tab-content active" id="publishTab">
+            <div class="admin-form">
+                <div class="form-group">
+                    <label for="adminPassword">密码</label>
+                    <input type="password" id="adminPassword" placeholder="输入管理员密码">
+                </div>
+                <div class="form-group">
+                    <label for="newsTitle">新闻标题</label>
+                    <input type="text" id="newsTitle" placeholder="输入新闻标题">
+                </div>
+                <div class="form-group">
+                    <label for="newsContent">新闻内容</label>
+                    <textarea id="newsContent" rows="5" placeholder="输入新闻内容"></textarea>
+                </div>
+                <button id="publishBtn">发布新闻</button>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="manageTab">
+            <div class="admin-form">
+                <div class="form-group">
+                    <label for="managePassword">密码</label>
+                    <input type="password" id="managePassword" placeholder="输入管理员密码">
+                    <button class="btn-verify" id="verifyPasswordBtn">确定</button>
+                </div>
+                <h3>新闻列表</h3>
+                <div class="news-list" id="newsList">
+                    <div class="empty-state">
+                        <i class="fas fa-key"></i>
+                        <p>请输入密码并点击确定按钮查看新闻列表</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="settingsTab">
+            <div class="admin-form">
+                <div class="form-group">
+                    <label for="currentPassword">当前密码</label>
+                    <input type="password" id="currentPassword" placeholder="输入当前密码">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">新密码</label>
+                    <input type="password" id="newPassword" placeholder="输入新密码">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">确认新密码</label>
+                    <input type="password" id="confirmPassword" placeholder="再次输入新密码">
+                </div>
+                <button id="changePasswordBtn">修改密码</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <header>
-            <h1>珠峰实验学校</h1>
-            <p class="subtitle">位于广东斗门的现代化教育机构，致力于为学生提供优质的教育环境和全面的成长体验</p>
+            <h1>NewsHub</h1>
+            <p class="subtitle">珠峰实验新闻平台 · 澎湃OS质感</p>
         </header>
-        
-        <div class="card">
-            <h2 class="card-title"><i class="fas fa-info-circle"></i> 学校简介</h2>
-            <p>珠峰实验学校坐落于风景秀丽的广东斗门，是一所集现代化教育设施与优美校园环境于一体的优质学校。学校秉承"全面发展，个性成长"的教育理念，致力于培养具有创新精神和国际视野的新时代人才。</p>
-            
-            <div class="info-grid">
-                <div class="info-item">
-                    <i class="fas fa-calendar-alt"></i>
-                    <div>
-                        <h3>创办时间</h3>
-                        <p>2015年</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-graduation-cap"></i>
-                    <div>
-                        <h3>学校类型</h3>
-                        <p>九年一贯制学校</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-users"></i>
-                    <div>
-                        <h3>学生规模</h3>
-                        <p>2000余名学生</p>
-                    </div>
-                </div>
+
+        <div class="news-container" id="newsContainer">
+            <!-- 新闻将动态添加到这里 -->
+            <div class="empty-state" id="emptyState">
+                <i class="far fa-newspaper"></i>
+                <p>暂无新闻!</p>
             </div>
         </div>
-        
-        <div class="card">
-            <h2 class="card-title"><i class="fas fa-image"></i> 学校风貌</h2>
-            <p>我们的校园融合了现代建筑与自然景观，为学生提供了理想的学习和成长环境。</p>
-            
-            <div class="gallery">
-                <div class="gallery-item">
-                    <!-- 校园全景图片 -->
-                    <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBERNouc5lsoI9PacpcyUVk3kl9bZ0jQACLxoAAi5q0VVLoBDCZbBjpjYE.jpg" alt="校园全景">
-                    <div class="gallery-caption">校园全景</div>
-                </div>
-                <div class="gallery-item">
-                    <!-- 校园全景的下一个位置 -->
-                    <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBERRouc7dTZm6xuA2v3eDzzs1Croa9AACMRoAAi5q0VUWYNfefr6ybTYE.jpg" alt="现代化教室">
-                    <div class="gallery-caption">现代化教室</div>
-                </div>
-                <div class="gallery-item">
-                    <!-- 校园全景的下面的下面的位置 -->
-                    <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBERVouc85BkvXeBPRvdKxbN1zmHzk3wACMxoAAi5q0VWaiJ8JsGlbJzYE.jpg" alt="图书馆">
-                    <div class="gallery-caption">学校氛围</div>
-                </div>
-                <div class="gallery-item">
-                    <!-- 倒数第一的图片位置 -->
-                    <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBERZouc-B3aoR7Fov67_K_WT2L038ZgACNBoAAi5q0VXRI8p5oE5NgzYE.jpg" alt="学生活动">
-                    <div class="gallery-caption">学生活动</div>
-                </div>
+    </div>
+
+    <footer>
+        <p>© 2025 NewsHub · 珠峰实验新闻平台</p>
+    </footer>
+
+    <!-- 编辑新闻模态框 -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h2>编辑新闻</h2>
+            <div class="form-group">
+                <label for="editTitle">新闻标题</label>
+                <input type="text" id="editTitle">
+            </div>
+            <div class="form-group">
+                <label for="editContent">新闻内容</label>
+                <textarea id="editContent" rows="5"></textarea>
+            </div>
+            <div class="news-actions">
+                <button class="btn-small" id="cancelEdit">取消</button>
+                <button class="btn-small" id="saveEdit">保存</button>
             </div>
         </div>
-        
-        <div class="card">
-            <h2 class="card-title"><i class="fas fa-map-marker-alt"></i> 学校地址</h2>
-            <p>广东省珠海市斗门区珠峰大道</p>
-            
-            <div class="map-container">
-                <!-- 替换为新的地理位置图片 -->
-                <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBERdoudGpNOL0j4tYuF7qvNlZb9xkFAACNxoAAi5q0VUh2BbjnHAKXjYE.jpg" alt="珠峰实验学校地理位置">
-            </div>
-            
-            <div class="info-grid" style="margin-top: 20px;">
-                <div class="info-item">
-                    <i class="fas fa-bus"></i>
-                    <div>
-                        <h3>公共交通</h3>
-                        <p>可乘坐303,308等多路公交车至"珠峰实验学校"站或者"理工学校"附近</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-car"></i>
-                    <div>
-                        <h3>自驾路线</h3>
-                        <p>从珠海大道转入珠峰大道，沿路标行驶即可到达</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2 class="card-title"><i class="fas fa-star"></i> 办学特色</h2>
-            <p>珠峰实验学校以其独特的教育理念和优质的办学条件，在多个方面展现出卓越特色：</p>
-            
-            <ul class="feature-list">
-                <li><i class="fas fa-check-circle"></i> 小班化教学，关注每个学生个体发展</li>
-                <li><i class="fas fa-check-circle"></i> 双语教学环境，强化语言能力培养</li>
-                <li><i class="fas fa-check-circle"></i> 丰富的课外活动，促进学生全面发展</li>
-                <li><i class="fas fa-check-circle"></i> 先进的教学设施，打造智慧校园</li>
-                <li><i class="fas fa-check-circle"></i> 优秀的师资队伍，保证教学质量</li>
-            </ul>
-        </div>
-        
-        <footer>
-            <p>© 2025 珠峰实验学校 学生版权所有</p>
-            <p>学生自主创建 | 联系/建议邮箱: 3131521660@qq.com</p>
-        </footer>
     </div>
 
     <script>
-        // 添加简单的交互效果
         document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.card');
+            // 获取DOM元素
+            const adminToggle = document.getElementById('adminToggle');
+            const adminPanel = document.getElementById('adminPanel');
+            const panelOverlay = document.getElementById('panelOverlay');
+            const adminPassword = document.getElementById('adminPassword');
+            const newsTitle = document.getElementById('newsTitle');
+            const newsContent = document.getElementById('newsContent');
+            const publishBtn = document.getElementById('publishBtn');
+            const newsContainer = document.getElementById('newsContainer');
+            const emptyState = document.getElementById('emptyState');
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const managePassword = document.getElementById('managePassword');
+            const verifyPasswordBtn = document.getElementById('verifyPasswordBtn');
+            const newsList = document.getElementById('newsList');
+            const currentPassword = document.getElementById('currentPassword');
+            const newPassword = document.getElementById('newPassword');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            const editModal = document.getElementById('editModal');
+            const editTitle = document.getElementById('editTitle');
+            const editContent = document.getElementById('editContent');
+            const cancelEdit = document.getElementById('cancelEdit');
+            const saveEdit = document.getElementById('saveEdit');
+            const currentTimeElement = document.getElementById('currentTime');
             
-            cards.forEach((card, index) => {
-                // 添加延迟显示效果
-                card.style.opacity = 0;
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            // 存储新闻数据和管理员密码
+            let newsData = JSON.parse(localStorage.getItem('newsData')) || [];
+            let adminPass = localStorage.getItem('adminPassword') || '9178132778';
+            let currentEditId = null;
+            let isPasswordVerified = false;
+            
+            // 更新时间显示
+            function updateTime() {
+                const now = new Date();
+                const options = { 
+                    timeZone: 'Asia/Shanghai', 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit',
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit',
+                    hour12: false 
+                };
+                const formatter = new Intl.DateTimeFormat('zh-CN', options);
+                const formattedTime = formatter.format(now);
+                currentTimeElement.textContent = formattedTime;
+            }
+            
+            // 初始化时间显示
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // 显示所有新闻
+            function renderNews() {
+                if (newsData.length === 0) {
+                    emptyState.style.display = 'block';
+                    return;
+                }
                 
-                setTimeout(() => {
-                    card.style.opacity = 1;
-                    card.style.transform = 'translateY(0)';
-                }, 100 + (index * 100));
+                emptyState.style.display = 'none';
+                newsContainer.innerHTML = '';
+                
+                // 按日期降序排列新闻
+                newsData.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                newsData.forEach((news, index) => {
+                    const newsItem = document.createElement('div');
+                    newsItem.className = 'news-item';
+                    newsItem.setAttribute('data-id', news.id);
+                    newsItem.innerHTML = `
+                        <div class="news-title">${news.title}</div>
+                        <div class="news-content">${news.content}</div>
+                        <div class="news-date">${formatDate(news.date)}</div>
+                    `;
+                    
+                    // 添加点击事件
+                    newsItem.addEventListener('click', () => {
+                        // 移除所有active类
+                        document.querySelectorAll('.news-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        // 添加active类到当前项目
+                        newsItem.classList.add('active');
+                    });
+                    
+                    newsContainer.appendChild(newsItem);
+                });
+            }
+            
+            // 渲染新闻管理列表
+            function renderNewsList() {
+                newsList.innerHTML = '';
+                
+                if (newsData.length === 0) {
+                    newsList.innerHTML = '<p class="empty-state">暂无新闻</p>';
+                    return;
+                }
+                
+                // 按日期降序排列新闻
+                newsData.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                newsData.forEach(news => {
+                    const newsItem = document.createElement('div');
+                    newsItem.className = 'manage-news-item';
+                    newsItem.innerHTML = `
+                        <div class="news-title">${news.title}</div>
+                        <div class="news-date">${formatDate(news.date)}</div>
+                        <div class="news-actions">
+                            <button class="btn-small btn-edit" data-id="${news.id}">编辑</button>
+                            <button class="btn-small btn-delete" data-id="${news.id}">删除</button>
+                        </div>
+                    `;
+                    
+                    newsList.appendChild(newsItem);
+                });
+                
+                // 添加编辑和删除事件
+                document.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.target.getAttribute('data-id');
+                        openEditModal(id);
+                    });
+                });
+                
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.target.getAttribute('data-id');
+                        deleteNews(id);
+                    });
+                });
+            }
+            
+            // 验证密码
+            verifyPasswordBtn.addEventListener('click', () => {
+                if (managePassword.value === adminPass) {
+                    isPasswordVerified = true;
+                    renderNewsList();
+                } else {
+                    alert('密码错误！');
+                    isPasswordVerified = false;
+                }
             });
+            
+            // 打开编辑模态框
+            function openEditModal(id) {
+                if (!isPasswordVerified) {
+                    alert('请先验证密码');
+                    return;
+                }
+                
+                const news = newsData.find(item => item.id === id);
+                if (news) {
+                    editTitle.value = news.title;
+                    editContent.value = news.content;
+                    currentEditId = id;
+                    editModal.classList.add('active');
+                }
+            }
+            
+            // 保存编辑
+            saveEdit.addEventListener('click', () => {
+                if (currentEditId) {
+                    const newsIndex = newsData.findIndex(item => item.id === currentEditId);
+                    if (newsIndex !== -1) {
+                        newsData[newsIndex].title = editTitle.value;
+                        newsData[newsIndex].content = editContent.value;
+                        newsData[newsIndex].date = new Date().toISOString();
+                        
+                        localStorage.setItem('newsData', JSON.stringify(newsData));
+                        renderNews();
+                        renderNewsList();
+                        editModal.classList.remove('active');
+                        alert('新闻修改成功！');
+                    }
+                }
+            });
+            
+            // 取消编辑
+            cancelEdit.addEventListener('click', () => {
+                editModal.classList.remove('active');
+            });
+            
+            // 删除新闻
+            function deleteNews(id) {
+                if (!isPasswordVerified) {
+                    alert('请先验证密码');
+                    return;
+                }
+                
+                if (confirm('确定要删除这条新闻吗？')) {
+                    newsData = newsData.filter(item => item.id !== id);
+                    localStorage.setItem('newsData', JSON.stringify(newsData));
+                    renderNews();
+                    renderNewsList();
+                    alert('新闻已删除！');
+                }
+            }
+            
+            // 格式化日期
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+            }
+            
+            // 切换标签页
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // 移除所有active类
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(tc => tc.classList.remove('active'));
+                    
+                    // 添加active类到当前标签
+                    tab.classList.add('active');
+                    document.getElementById(`${tabId}Tab`).classList.add('active');
+                    
+                    // 如果切换到管理标签且密码已验证，刷新列表
+                    if (tabId === 'manage' && isPasswordVerified) {
+                        renderNewsList();
+                    }
+                });
+            });
+            
+            // 切换管理员面板
+            adminToggle.addEventListener('click', () => {
+                adminPanel.classList.add('active');
+                panelOverlay.classList.add('active');
+            });
+            
+            // 点击遮罩关闭面板
+            panelOverlay.addEventListener('click', () => {
+                adminPanel.classList.remove('active');
+                panelOverlay.classList.remove('active');
+            });
+            
+            // 发布新闻
+            publishBtn.addEventListener('click', () => {
+                if (adminPassword.value !== adminPass) {
+                    alert('管理员密码错误！');
+                    return;
+                }
+                
+                if (!newsTitle.value || !newsContent.value) {
+                    alert('请填写新闻标题和内容！');
+                    return;
+                }
+                
+                // 获取当前北京时间
+                const now = new Date();
+                const options = { 
+                    timeZone: 'Asia/Shanghai', 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit',
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit',
+                    hour12: false 
+                };
+                const formatter = new Intl.DateTimeFormat('zh-CN', options);
+                const beijingTime = formatter.format(now);
+                
+                // 创建新闻对象
+                const news = {
+                    id: Date.now().toString(),
+                    title: newsTitle.value,
+                    content: newsContent.value,
+                    date: new Date().toISOString(),
+                    displayDate: beijingTime
+                };
+                
+                // 添加到新闻数组
+                newsData.push(news);
+                
+                // 保存到localStorage
+                localStorage.setItem('newsData', JSON.stringify(newsData));
+                
+                // 重新渲染新闻
+                renderNews();
+                
+                // 清空表单
+                newsTitle.value = '';
+                newsContent.value = '';
+                
+                alert('新闻发布成功！');
+            });
+            
+            // 修改密码
+            changePasswordBtn.addEventListener('click', () => {
+                if (currentPassword.value !== adminPass) {
+                    alert('当前密码错误！');
+                    return;
+                }
+                
+                if (newPassword.value !== confirmPassword.value) {
+                    alert('两次输入的新密码不一致！');
+                    return;
+                }
+                
+                if (newPassword.value.length < 6) {
+                    alert('新密码长度不能少于6位！');
+                    return;
+                }
+                
+                adminPass = newPassword.value;
+                localStorage.setItem('adminPassword', adminPass);
+                
+                currentPassword.value = '';
+                newPassword.value = '';
+                confirmPassword.value = '';
+                
+                alert('密码修改成功！');
+            });
+            
+            // 初始渲染新闻
+            renderNews();
         });
     </script>
 </body>
-</html>上一次更新:2025年9月6日18:57PM-v1.5版本-
-<!-- 在body底部添加 -->
-<audio id="bgMusic" autoplay loop>
-    <source src="http://music.163.com/song/media/outer/url?id=2614435703.mp3" type="audio/mpeg">
-    您的浏览器不支持音频播放
-</audio>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const audio = document.getElementById('bgMusic');
-    audio.volume = 0.3; // 设置音量（30%）
-    
-    // 用户交互后尝试播放（解决浏览器限制）
-    document.body.addEventListener('click', function() {
-        if (audio.paused) {
-            audio.play().catch(e => console.log('播放失败:', e));
-        }
-    });
-    
-    // 尝试自动播放
-    audio.play().catch(e => {
-        console.log('自动播放被阻止，需要用户交互');
-    });
-});
-</script>
-
-<!-- 可选：添加音乐控制按钮 -->
-<div style="position:fixed; bottom:20px; right:20px; z-index:1000; background:rgba(0,0,0,0.7); color:white; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="toggleMusic()">
-    <i id="musicIcon" class="fas fa-volume-up"></i>
-</div>
-
-<script>
-// 音乐控制功能
-let musicEnabled = true;
-
-function toggleMusic() {
-    const audio = document.getElementById('bgMusic');
-    const icon = document.getElementById('musicIcon');
-    
-    if (musicEnabled) {
-        audio.pause();
-        icon.className = 'fas fa-volume-mute';
-    } else {
-        audio.play();
-        icon.className = 'fas fa-volume-up';
-    }
-    musicEnabled = !musicEnabled;
-}
-</script>
+</html>
