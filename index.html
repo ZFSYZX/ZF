@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NewsHub - 珠峰实验新闻平台</title>
+    <title>珠峰实验新闻 - 云同步新闻平台</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -360,6 +363,44 @@
             display: block;
         }
 
+        /* 连接状态指示器 */
+        .connection-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-online {
+            color: #34C759;
+        }
+
+        .status-offline {
+            color: #FF3B30;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-online {
+            background: #34C759;
+        }
+
+        .dot-offline {
+            background: #FF3B30;
+        }
+
         /* 滚动条样式 */
         ::-webkit-scrollbar {
             width: 8px;
@@ -404,6 +445,21 @@
                 left: 10px;
                 font-size: 0.8rem;
             }
+        }
+
+        /* 加载动画 */
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #007AFF;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -485,20 +541,28 @@
     <div class="container">
         <header>
             <h1>NewsHub</h1>
-            <p class="subtitle">珠峰实验新闻平台 · 澎湃OS质感</p>
+            <p class="subtitle">云同步新闻平台 · 澎湃OS质感</p>
         </header>
 
         <div class="news-container" id="newsContainer">
-            <!-- 新闻将动态添加到这里 -->
-            <div class="empty-state" id="emptyState">
+            <div class="empty-state" id="loadingState">
+                <div class="loader"></div>
+                <p>正在加载新闻...</p>
+            </div>
+            <div class="empty-state" id="emptyState" style="display: none;">
                 <i class="far fa-newspaper"></i>
-                <p>暂无新闻!</p>
+                <p>暂无新闻，点击右侧管理员按钮发布第一条新闻</p>
             </div>
         </div>
     </div>
 
+    <div class="connection-status" id="connectionStatus">
+        <span class="status-dot dot-offline"></span>
+        <span class="status-offline">离线中</span>
+    </div>
+
     <footer>
-        <p>© 2025 NewsHub · 珠峰实验新闻平台</p>
+        <p>© 2023 NewsHub · 云同步新闻平台 | 数据存储于Firebase云服务</p>
     </footer>
 
     <!-- 编辑新闻模态框 -->
@@ -522,6 +586,20 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Firebase配置 - 需要替换为您自己的配置
+            const firebaseConfig = {
+                apiKey: "AIzaSyDummyAPIKeyForExampleOnly",
+                authDomain: "your-project-id.firebaseapp.com",
+                projectId: "your-project-id",
+                storageBucket: "your-project-id.appspot.com",
+                messagingSenderId: "1234567890",
+                appId: "1:1234567890:web:abc123def456"
+            };
+            
+            // 初始化Firebase
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.firestore();
+            
             // 获取DOM元素
             const adminToggle = document.getElementById('adminToggle');
             const adminPanel = document.getElementById('adminPanel');
@@ -531,6 +609,7 @@
             const newsContent = document.getElementById('newsContent');
             const publishBtn = document.getElementById('publishBtn');
             const newsContainer = document.getElementById('newsContainer');
+            const loadingState = document.getElementById('loadingState');
             const emptyState = document.getElementById('emptyState');
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');
@@ -547,12 +626,23 @@
             const cancelEdit = document.getElementById('cancelEdit');
             const saveEdit = document.getElementById('saveEdit');
             const currentTimeElement = document.getElementById('currentTime');
+            const connectionStatus = document.getElementById('connectionStatus');
             
             // 存储新闻数据和管理员密码
-            let newsData = JSON.parse(localStorage.getItem('newsData')) || [];
-            let adminPass = localStorage.getItem('adminPassword') || '9178132778';
+            let newsData = [];
+            let adminPass = "9178132778"; // 默认密码
             let currentEditId = null;
             let isPasswordVerified = false;
+            
+            // 设置连接状态监听
+            firebase.firestore().enableNetwork()
+                .then(() => {
+                    connectionStatus.innerHTML = '<span class="status-dot dot-online"></span><span class="status-online">已连接到云服务</span>';
+                })
+                .catch((err) => {
+                    console.error("网络连接错误: ", err);
+                    connectionStatus.innerHTML = '<span class="status-dot dot-offline"></span><span class="status-offline">离线模式</span>';
+                });
             
             // 更新时间显示
             function updateTime() {
@@ -576,6 +666,52 @@
             updateTime();
             setInterval(updateTime, 1000);
             
+            // 从Firebase加载新闻
+            function loadNews() {
+                loadingState.style.display = 'block';
+                emptyState.style.display = 'none';
+                
+                db.collection("news").orderBy("date", "desc")
+                    .get()
+                    .then((querySnapshot) => {
+                        newsData = [];
+                        querySnapshot.forEach((doc) => {
+                            newsData.push({ id: doc.id, ...doc.data() });
+                        });
+                        renderNews();
+                        loadingState.style.display = 'none';
+                        if (newsData.length === 0) {
+                            emptyState.style.display = 'block';
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("加载新闻错误: ", error);
+                        loadingState.style.display = 'none';
+                        emptyState.style.display = 'block';
+                    });
+            }
+            
+            // 实时监听新闻更新
+            db.collection("news").orderBy("date", "desc")
+                .onSnapshot((querySnapshot) => {
+                    newsData = [];
+                    querySnapshot.forEach((doc) => {
+                        newsData.push({ id: doc.id, ...doc.data() });
+                    });
+                    renderNews();
+                    loadingState.style.display = 'none';
+                    if (newsData.length === 0) {
+                        emptyState.style.display = 'block';
+                    } else {
+                        emptyState.style.display = 'none';
+                    }
+                    
+                    // 如果管理面板已打开且密码已验证，更新管理列表
+                    if (adminPanel.classList.contains('active') && isPasswordVerified) {
+                        renderNewsList();
+                    }
+                });
+            
             // 显示所有新闻
             function renderNews() {
                 if (newsData.length === 0) {
@@ -586,10 +722,7 @@
                 emptyState.style.display = 'none';
                 newsContainer.innerHTML = '';
                 
-                // 按日期降序排列新闻
-                newsData.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                newsData.forEach((news, index) => {
+                newsData.forEach((news) => {
                     const newsItem = document.createElement('div');
                     newsItem.className = 'news-item';
                     newsItem.setAttribute('data-id', news.id);
@@ -621,9 +754,6 @@
                     newsList.innerHTML = '<p class="empty-state">暂无新闻</p>';
                     return;
                 }
-                
-                // 按日期降序排列新闻
-                newsData.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
                 newsData.forEach(news => {
                     const newsItem = document.createElement('div');
@@ -688,15 +818,20 @@
                 if (currentEditId) {
                     const newsIndex = newsData.findIndex(item => item.id === currentEditId);
                     if (newsIndex !== -1) {
-                        newsData[newsIndex].title = editTitle.value;
-                        newsData[newsIndex].content = editContent.value;
-                        newsData[newsIndex].date = new Date().toISOString();
-                        
-                        localStorage.setItem('newsData', JSON.stringify(newsData));
-                        renderNews();
-                        renderNewsList();
-                        editModal.classList.remove('active');
-                        alert('新闻修改成功！');
+                        // 更新Firebase中的新闻
+                        db.collection("news").doc(currentEditId).update({
+                            title: editTitle.value,
+                            content: editContent.value,
+                            date: new Date().toISOString()
+                        })
+                        .then(() => {
+                            editModal.classList.remove('active');
+                            alert('新闻修改成功！');
+                        })
+                        .catch((error) => {
+                            console.error("更新新闻错误: ", error);
+                            alert('新闻修改失败，请重试');
+                        });
                     }
                 }
             });
@@ -714,11 +849,15 @@
                 }
                 
                 if (confirm('确定要删除这条新闻吗？')) {
-                    newsData = newsData.filter(item => item.id !== id);
-                    localStorage.setItem('newsData', JSON.stringify(newsData));
-                    renderNews();
-                    renderNewsList();
-                    alert('新闻已删除！');
+                    // 从Firebase中删除新闻
+                    db.collection("news").doc(id).delete()
+                        .then(() => {
+                            alert('新闻已删除！');
+                        })
+                        .catch((error) => {
+                            console.error("删除新闻错误: ", error);
+                            alert('新闻删除失败，请重试');
+                        });
                 }
             }
             
@@ -789,27 +928,24 @@
                 
                 // 创建新闻对象
                 const news = {
-                    id: Date.now().toString(),
                     title: newsTitle.value,
                     content: newsContent.value,
                     date: new Date().toISOString(),
                     displayDate: beijingTime
                 };
                 
-                // 添加到新闻数组
-                newsData.push(news);
-                
-                // 保存到localStorage
-                localStorage.setItem('newsData', JSON.stringify(newsData));
-                
-                // 重新渲染新闻
-                renderNews();
-                
-                // 清空表单
-                newsTitle.value = '';
-                newsContent.value = '';
-                
-                alert('新闻发布成功！');
+                // 添加到Firebase
+                db.collection("news").add(news)
+                    .then((docRef) => {
+                        // 清空表单
+                        newsTitle.value = '';
+                        newsContent.value = '';
+                        alert('新闻发布成功！');
+                    })
+                    .catch((error) => {
+                        console.error("发布新闻错误: ", error);
+                        alert('新闻发布失败，请重试');
+                    });
             });
             
             // 修改密码
@@ -830,7 +966,6 @@
                 }
                 
                 adminPass = newPassword.value;
-                localStorage.setItem('adminPassword', adminPass);
                 
                 currentPassword.value = '';
                 newPassword.value = '';
@@ -839,8 +974,8 @@
                 alert('密码修改成功！');
             });
             
-            // 初始渲染新闻
-            renderNews();
+            // 初始加载新闻
+            loadNews();
         });
     </script>
 </body>
