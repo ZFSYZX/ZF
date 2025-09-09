@@ -541,17 +541,17 @@
     <div class="container">
         <header>
             <h1>NewsHub</h1>
-            <p class="subtitle">云同步新闻平台 · 澎湃OS质感</p>
+            <p class="subtitle">珠峰实验学校新闻平台</p>
         </header>
 
         <div class="news-container" id="newsContainer">
             <div class="empty-state" id="loadingState">
                 <div class="loader"></div>
-                <p>正在加载新闻...</p>
+                <p>正在连接服务器...</p>
             </div>
             <div class="empty-state" id="emptyState" style="display: none;">
                 <i class="far fa-newspaper"></i>
-                <p>暂无新闻，点击右侧管理员按钮发布第一条新闻</p>
+                <p>暂无新闻!（服务器未连接）</p>
             </div>
         </div>
     </div>
@@ -562,7 +562,7 @@
     </div>
 
     <footer>
-        <p>© 2023 NewsHub · 云同步新闻平台 | 数据存储于Firebase云服务</p>
+        <p>© 2025 NewsHub · 云新闻 | 个人小型服务器</p>
     </footer>
 
     <!-- 编辑新闻模态框 -->
@@ -637,11 +637,11 @@
             // 设置连接状态监听
             firebase.firestore().enableNetwork()
                 .then(() => {
-                    connectionStatus.innerHTML = '<span class="status-dot dot-online"></span><span class="status-online">已连接到云服务</span>';
+                    connectionStatus.innerHTML = '<span class="status-dot dot-online"></span><span class="status-online">服务器连接成功</span>';
                 })
                 .catch((err) => {
                     console.error("网络连接错误: ", err);
-                    connectionStatus.innerHTML = '<span class="status-dot dot-offline"></span><span class="status-offline">离线模式</span>';
+                    connectionStatus.innerHTML = '<span class="status-dot dot-offline"></span><span class="status-offline">服务器不在线</span>';
                 });
             
             // 更新时间显示
