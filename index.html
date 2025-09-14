@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>珠峰实验新闻 - 云同步新闻平台</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- 引入Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -394,589 +391,509 @@
         }
 
         .dot-online {
-            background: #34C759;
+            background-color: #34C759;
         }
 
         .dot-offline {
-            background: #FF3B30;
-        }
-
-        /* 滚动条样式 */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(0, 122, 255, 0.3);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 122, 255, 0.5);
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 600px) {
-            .container {
-                border-radius: 16px;
-                margin-top: 20px;
-            }
-            
-            header {
-                padding: 20px 15px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .admin-panel {
-                width: 280px;
-                right: -280px;
-            }
-            
-            .time-display {
-                top: 10px;
-                left: 10px;
-                font-size: 0.8rem;
-            }
+            background-color: #FF3B30;
         }
 
         /* 加载动画 */
         .loader {
-            display: inline-block;
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #007AFF;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #007AFF;
-            animation: spin 1s ease-in-out infinite;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="time-display">
-        <i class="far fa-clock"></i>
-        <span id="currentTime">加载中...</span>
-    </div>
-
-    <div class="admin-toggle" id="adminToggle">
-        <i class="fas fa-lock"></i>
-    </div>
-
-    <div class="panel-overlay" id="panelOverlay"></div>
-
-    <div class="admin-panel" id="adminPanel">
-        <h2>管理员面板</h2>
-        
-        <div class="tabs">
-            <div class="tab active" data-tab="publish">发布新闻</div>
-            <div class="tab" data-tab="manage">管理新闻</div>
-            <div class="tab" data-tab="settings">设置</div>
-        </div>
-        
-        <div class="tab-content active" id="publishTab">
-            <div class="admin-form">
-                <div class="form-group">
-                    <label for="adminPassword">密码</label>
-                    <input type="password" id="adminPassword" placeholder="输入管理员密码">
-                </div>
-                <div class="form-group">
-                    <label for="newsTitle">新闻标题</label>
-                    <input type="text" id="newsTitle" placeholder="输入新闻标题">
-                </div>
-                <div class="form-group">
-                    <label for="newsContent">新闻内容</label>
-                    <textarea id="newsContent" rows="5" placeholder="输入新闻内容"></textarea>
-                </div>
-                <button id="publishBtn">发布新闻</button>
-            </div>
-        </div>
-        
-        <div class="tab-content" id="manageTab">
-            <div class="admin-form">
-                <div class="form-group">
-                    <label for="managePassword">密码</label>
-                    <input type="password" id="managePassword" placeholder="输入管理员密码">
-                    <button class="btn-verify" id="verifyPasswordBtn">确定</button>
-                </div>
-                <h3>新闻列表</h3>
-                <div class="news-list" id="newsList">
-                    <div class="empty-state">
-                        <i class="fas fa-key"></i>
-                        <p>请输入密码并点击确定按钮查看新闻列表</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="tab-content" id="settingsTab">
-            <div class="admin-form">
-                <div class="form-group">
-                    <label for="currentPassword">当前密码</label>
-                    <input type="password" id="currentPassword" placeholder="输入当前密码">
-                </div>
-                <div class="form-group">
-                    <label for="newPassword">新密码</label>
-                    <input type="password" id="newPassword" placeholder="输入新密码">
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">确认新密码</label>
-                    <input type="password" id="confirmPassword" placeholder="再次输入新密码">
-                </div>
-                <button id="changePasswordBtn">修改密码</button>
-            </div>
-        </div>
+        <i class="fas fa-clock"></i>
+        <span id="current-time">加载中...</span>
     </div>
 
     <div class="container">
         <header>
-            <h1>NewsHub</h1>
-            <p class="subtitle">珠峰实验学校新闻平台</p>
+            <h1>珠峰实验新闻</h1>
+            <div class="subtitle">云同步新闻平台 - YesApi版</div>
         </header>
 
-        <div class="news-container" id="newsContainer">
-            <div class="empty-state" id="loadingState">
-                <div class="loader"></div>
-                <p>正在连接服务器...</p>
-            </div>
-            <div class="empty-state" id="emptyState" style="display: none;">
-                <i class="far fa-newspaper"></i>
-                <p>暂无新闻!（服务器未连接）</p>
+        <div class="news-container" id="news-container">
+            <div class="empty-state">
+                <i class="fas fa-newspaper"></i>
+                <p>暂无新闻，请稍后再试</p>
             </div>
         </div>
     </div>
 
-    <div class="connection-status" id="connectionStatus">
-        <span class="status-dot dot-offline"></span>
-        <span class="status-offline">离线中</span>
+    <div class="admin-toggle" id="admin-toggle">
+        <i class="fas fa-cog"></i>
+    </div>
+
+    <div class="admin-panel" id="admin-panel">
+        <h2>新闻管理</h2>
+        <div class="tabs">
+            <div class="tab active" data-tab="add">添加新闻</div>
+            <div class="tab" data-tab="manage">管理新闻</div>
+        </div>
+
+        <div class="tab-content active" id="tab-add">
+            <div class="admin-form">
+                <div class="form-group">
+                    <label for="news-title">新闻标题</label>
+                    <input type="text" id="news-title" placeholder="输入新闻标题">
+                </div>
+                <div class="form-group">
+                    <label for="news-content">新闻内容</label>
+                    <textarea id="news-content" rows="5" placeholder="输入新闻内容"></textarea>
+                </div>
+                <button id="submit-news">发布新闻</button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-manage">
+            <div class="news-list" id="manage-news-list">
+                <div class="empty-state">
+                    <i class="fas fa-newspaper"></i>
+                    <p>暂无新闻</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-overlay" id="panel-overlay"></div>
+
+    <div class="connection-status" id="connection-status">
+        <span class="status-dot dot-online"></span>
+        <span class="status-text">已连接</span>
     </div>
 
     <footer>
-        <p>© 2025 NewsHub · 云新闻 | 个人小型服务器</p>
+        <p>© 2023 珠峰实验新闻 - 基于YesApi的云同步平台</p>
     </footer>
 
-    <!-- 编辑新闻模态框 -->
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <h2>编辑新闻</h2>
-            <div class="form-group">
-                <label for="editTitle">新闻标题</label>
-                <input type="text" id="editTitle">
-            </div>
-            <div class="form-group">
-                <label for="editContent">新闻内容</label>
-                <textarea id="editContent" rows="5"></textarea>
-            </div>
-            <div class="news-actions">
-                <button class="btn-small" id="cancelEdit">取消</button>
-                <button class="btn-small" id="saveEdit">保存</button>
-            </div>
-        </div>
-    </div>
-
     <script>
+        // 配置信息
+        const API_CONFIG = {
+            endpoint: 'http://api.yesapi.net/',
+            app_key: 'F2F79199C1FDE044EFDE13BB17F2330B',
+            app_secrect: 'zgGUJdRke92DIvLauXD60thxVhwaBII0XVEYpk4zKNNByV7rk1h25tvXcs'
+        };
+
+        // 全局变量
+        let currentEditingId = null;
+        let newsData = [];
+
+        // DOM元素
+        const newsContainer = document.getElementById('news-container');
+        const adminToggle = document.getElementById('admin-toggle');
+        const adminPanel = document.getElementById('admin-panel');
+        const panelOverlay = document.getElementById('panel-overlay');
+        const newsTitleInput = document.getElementById('news-title');
+        const newsContentInput = document.getElementById('news-content');
+        const submitNewsButton = document.getElementById('submit-news');
+        const manageNewsList = document.getElementById('manage-news-list');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const connectionStatus = document.getElementById('connection-status');
+
+        // 初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // Firebase配置 - 需要替换为您自己的配置
-            const firebaseConfig = {
-                apiKey: "AIzaSyDummyAPIKeyForExampleOnly",
-                authDomain: "your-project-id.firebaseapp.com",
-                projectId: "your-project-id",
-                storageBucket: "your-project-id.appspot.com",
-                messagingSenderId: "1234567890",
-                appId: "1:1234567890:web:abc123def456"
-            };
-            
-            // 初始化Firebase
-            firebase.initializeApp(firebaseConfig);
-            const db = firebase.firestore();
-            
-            // 获取DOM元素
-            const adminToggle = document.getElementById('adminToggle');
-            const adminPanel = document.getElementById('adminPanel');
-            const panelOverlay = document.getElementById('panelOverlay');
-            const adminPassword = document.getElementById('adminPassword');
-            const newsTitle = document.getElementById('newsTitle');
-            const newsContent = document.getElementById('newsContent');
-            const publishBtn = document.getElementById('publishBtn');
-            const newsContainer = document.getElementById('newsContainer');
-            const loadingState = document.getElementById('loadingState');
-            const emptyState = document.getElementById('emptyState');
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-            const managePassword = document.getElementById('managePassword');
-            const verifyPasswordBtn = document.getElementById('verifyPasswordBtn');
-            const newsList = document.getElementById('newsList');
-            const currentPassword = document.getElementById('currentPassword');
-            const newPassword = document.getElementById('newPassword');
-            const confirmPassword = document.getElementById('confirmPassword');
-            const changePasswordBtn = document.getElementById('changePasswordBtn');
-            const editModal = document.getElementById('editModal');
-            const editTitle = document.getElementById('editTitle');
-            const editContent = document.getElementById('editContent');
-            const cancelEdit = document.getElementById('cancelEdit');
-            const saveEdit = document.getElementById('saveEdit');
-            const currentTimeElement = document.getElementById('currentTime');
-            const connectionStatus = document.getElementById('connectionStatus');
-            
-            // 存储新闻数据和管理员密码
-            let newsData = [];
-            let adminPass = "9178132778"; // 默认密码
-            let currentEditId = null;
-            let isPasswordVerified = false;
-            
-            // 设置连接状态监听
-            firebase.firestore().enableNetwork()
-                .then(() => {
-                    connectionStatus.innerHTML = '<span class="status-dot dot-online"></span><span class="status-online">服务器连接成功</span>';
-                })
-                .catch((err) => {
-                    console.error("网络连接错误: ", err);
-                    connectionStatus.innerHTML = '<span class="status-dot dot-offline"></span><span class="status-offline">服务器不在线</span>';
-                });
-            
-            // 更新时间显示
-            function updateTime() {
-                const now = new Date();
-                const options = { 
-                    timeZone: 'Asia/Shanghai', 
-                    year: 'numeric', 
-                    month: '2-digit', 
-                    day: '2-digit',
-                    hour: '2-digit', 
-                    minute: '2-digit', 
-                    second: '2-digit',
-                    hour12: false 
-                };
-                const formatter = new Intl.DateTimeFormat('zh-CN', options);
-                const formattedTime = formatter.format(now);
-                currentTimeElement.textContent = formattedTime;
-            }
-            
-            // 初始化时间显示
             updateTime();
             setInterval(updateTime, 1000);
             
-            // 从Firebase加载新闻
-            function loadNews() {
-                loadingState.style.display = 'block';
-                emptyState.style.display = 'none';
-                
-                db.collection("news").orderBy("date", "desc")
-                    .get()
-                    .then((querySnapshot) => {
-                        newsData = [];
-                        querySnapshot.forEach((doc) => {
-                            newsData.push({ id: doc.id, ...doc.data() });
-                        });
-                        renderNews();
-                        loadingState.style.display = 'none';
-                        if (newsData.length === 0) {
-                            emptyState.style.display = 'block';
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("加载新闻错误: ", error);
-                        loadingState.style.display = 'none';
-                        emptyState.style.display = 'block';
-                    });
-            }
+            loadNews();
+            setupEventListeners();
+        });
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 管理员面板切换
+            adminToggle.addEventListener('click', toggleAdminPanel);
+            panelOverlay.addEventListener('click', toggleAdminPanel);
             
-            // 实时监听新闻更新
-            db.collection("news").orderBy("date", "desc")
-                .onSnapshot((querySnapshot) => {
-                    newsData = [];
-                    querySnapshot.forEach((doc) => {
-                        newsData.push({ id: doc.id, ...doc.data() });
-                    });
-                    renderNews();
-                    loadingState.style.display = 'none';
-                    if (newsData.length === 0) {
-                        emptyState.style.display = 'block';
-                    } else {
-                        emptyState.style.display = 'none';
-                    }
-                    
-                    // 如果管理面板已打开且密码已验证，更新管理列表
-                    if (adminPanel.classList.contains('active') && isPasswordVerified) {
-                        renderNewsList();
-                    }
-                });
-            
-            // 显示所有新闻
-            function renderNews() {
-                if (newsData.length === 0) {
-                    emptyState.style.display = 'block';
-                    return;
-                }
-                
-                emptyState.style.display = 'none';
-                newsContainer.innerHTML = '';
-                
-                newsData.forEach((news) => {
-                    const newsItem = document.createElement('div');
-                    newsItem.className = 'news-item';
-                    newsItem.setAttribute('data-id', news.id);
-                    newsItem.innerHTML = `
-                        <div class="news-title">${news.title}</div>
-                        <div class="news-content">${news.content}</div>
-                        <div class="news-date">${formatDate(news.date)}</div>
-                    `;
-                    
-                    // 添加点击事件
-                    newsItem.addEventListener('click', () => {
-                        // 移除所有active类
-                        document.querySelectorAll('.news-item').forEach(item => {
-                            item.classList.remove('active');
-                        });
-                        // 添加active类到当前项目
-                        newsItem.classList.add('active');
-                    });
-                    
-                    newsContainer.appendChild(newsItem);
-                });
-            }
-            
-            // 渲染新闻管理列表
-            function renderNewsList() {
-                newsList.innerHTML = '';
-                
-                if (newsData.length === 0) {
-                    newsList.innerHTML = '<p class="empty-state">暂无新闻</p>';
-                    return;
-                }
-                
-                newsData.forEach(news => {
-                    const newsItem = document.createElement('div');
-                    newsItem.className = 'manage-news-item';
-                    newsItem.innerHTML = `
-                        <div class="news-title">${news.title}</div>
-                        <div class="news-date">${formatDate(news.date)}</div>
-                        <div class="news-actions">
-                            <button class="btn-small btn-edit" data-id="${news.id}">编辑</button>
-                            <button class="btn-small btn-delete" data-id="${news.id}">删除</button>
-                        </div>
-                    `;
-                    
-                    newsList.appendChild(newsItem);
-                });
-                
-                // 添加编辑和删除事件
-                document.querySelectorAll('.btn-edit').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = e.target.getAttribute('data-id');
-                        openEditModal(id);
-                    });
-                });
-                
-                document.querySelectorAll('.btn-delete').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = e.target.getAttribute('data-id');
-                        deleteNews(id);
-                    });
-                });
-            }
-            
-            // 验证密码
-            verifyPasswordBtn.addEventListener('click', () => {
-                if (managePassword.value === adminPass) {
-                    isPasswordVerified = true;
-                    renderNewsList();
-                } else {
-                    alert('密码错误！');
-                    isPasswordVerified = false;
-                }
-            });
-            
-            // 打开编辑模态框
-            function openEditModal(id) {
-                if (!isPasswordVerified) {
-                    alert('请先验证密码');
-                    return;
-                }
-                
-                const news = newsData.find(item => item.id === id);
-                if (news) {
-                    editTitle.value = news.title;
-                    editContent.value = news.content;
-                    currentEditId = id;
-                    editModal.classList.add('active');
-                }
-            }
-            
-            // 保存编辑
-            saveEdit.addEventListener('click', () => {
-                if (currentEditId) {
-                    const newsIndex = newsData.findIndex(item => item.id === currentEditId);
-                    if (newsIndex !== -1) {
-                        // 更新Firebase中的新闻
-                        db.collection("news").doc(currentEditId).update({
-                            title: editTitle.value,
-                            content: editContent.value,
-                            date: new Date().toISOString()
-                        })
-                        .then(() => {
-                            editModal.classList.remove('active');
-                            alert('新闻修改成功！');
-                        })
-                        .catch((error) => {
-                            console.error("更新新闻错误: ", error);
-                            alert('新闻修改失败，请重试');
-                        });
-                    }
-                }
-            });
-            
-            // 取消编辑
-            cancelEdit.addEventListener('click', () => {
-                editModal.classList.remove('active');
-            });
-            
-            // 删除新闻
-            function deleteNews(id) {
-                if (!isPasswordVerified) {
-                    alert('请先验证密码');
-                    return;
-                }
-                
-                if (confirm('确定要删除这条新闻吗？')) {
-                    // 从Firebase中删除新闻
-                    db.collection("news").doc(id).delete()
-                        .then(() => {
-                            alert('新闻已删除！');
-                        })
-                        .catch((error) => {
-                            console.error("删除新闻错误: ", error);
-                            alert('新闻删除失败，请重试');
-                        });
-                }
-            }
-            
-            // 格式化日期
-            function formatDate(dateString) {
-                const date = new Date(dateString);
-                return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-            }
-            
-            // 切换标签页
+            // 标签切换
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabId = tab.getAttribute('data-tab');
-                    
-                    // 移除所有active类
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tabContents.forEach(tc => tc.classList.remove('active'));
-                    
-                    // 添加active类到当前标签
-                    tab.classList.add('active');
-                    document.getElementById(`${tabId}Tab`).classList.add('active');
-                    
-                    // 如果切换到管理标签且密码已验证，刷新列表
-                    if (tabId === 'manage' && isPasswordVerified) {
-                        renderNewsList();
-                    }
+                    switchTab(tabId);
                 });
             });
             
-            // 切换管理员面板
-            adminToggle.addEventListener('click', () => {
-                adminPanel.classList.add('active');
-                panelOverlay.classList.add('active');
+            // 新闻提交
+            submitNewsButton.addEventListener('click', submitNews);
+        }
+
+        // 更新当前时间
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        // 切换管理员面板
+        function toggleAdminPanel() {
+            adminPanel.classList.toggle('active');
+            panelOverlay.classList.toggle('active');
+        }
+
+        // 切换标签页
+        function switchTab(tabId) {
+            tabs.forEach(tab => {
+                if (tab.getAttribute('data-tab') === tabId) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
             });
             
-            // 点击遮罩关闭面板
-            panelOverlay.addEventListener('click', () => {
-                adminPanel.classList.remove('active');
-                panelOverlay.classList.remove('active');
+            tabContents.forEach(content => {
+                if (content.id === `tab-${tabId}`) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
             });
             
-            // 发布新闻
-            publishBtn.addEventListener('click', () => {
-                if (adminPassword.value !== adminPass) {
-                    alert('管理员密码错误！');
-                    return;
+            if (tabId === 'manage') {
+                loadManageNewsList();
+            }
+        }
+
+        // 加载新闻
+        async function loadNews() {
+            try {
+                showLoader();
+                
+                // 调用YesApi接口获取新闻数据
+                const response = await fetchYesApi('App.Hello.World', { name: 'NewsApp' });
+                
+                if (response && response.ret === 200) {
+                    // 假设返回的数据格式为 $标题1$内容1$|$标题2$内容2$
+                    // 这里需要根据实际API返回格式进行解析
+                    parseNewsData(response.data.title);
+                } else {
+                    showError('加载新闻失败');
                 }
+            } catch (error) {
+                console.error('加载新闻出错:', error);
+                showError('网络错误，请检查连接');
+                updateConnectionStatus(false);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // 解析新闻数据
+        function parseNewsData(data) {
+            // 清空现有新闻
+            newsContainer.innerHTML = '';
+            newsData = [];
+            
+            // 示例解析逻辑 - 根据实际API返回格式调整
+            // 这里假设数据格式为: $标题1$内容1$|$标题2$内容2$
+            if (data && data.includes('$')) {
+                const newsItems = data.split('|');
                 
-                if (!newsTitle.value || !newsContent.value) {
-                    alert('请填写新闻标题和内容！');
-                    return;
-                }
-                
-                // 获取当前北京时间
-                const now = new Date();
-                const options = { 
-                    timeZone: 'Asia/Shanghai', 
-                    year: 'numeric', 
-                    month: '2-digit', 
-                    day: '2-digit',
-                    hour: '2-digit', 
-                    minute: '2-digit', 
-                    second: '2-digit',
-                    hour12: false 
-                };
-                const formatter = new Intl.DateTimeFormat('zh-CN', options);
-                const beijingTime = formatter.format(now);
-                
-                // 创建新闻对象
-                const news = {
-                    title: newsTitle.value,
-                    content: newsContent.value,
-                    date: new Date().toISOString(),
-                    displayDate: beijingTime
-                };
-                
-                // 添加到Firebase
-                db.collection("news").add(news)
-                    .then((docRef) => {
-                        // 清空表单
-                        newsTitle.value = '';
-                        newsContent.value = '';
-                        alert('新闻发布成功！');
-                    })
-                    .catch((error) => {
-                        console.error("发布新闻错误: ", error);
-                        alert('新闻发布失败，请重试');
-                    });
+                newsItems.forEach(item => {
+                    const parts = item.split('$').filter(part => part !== '');
+                    if (parts.length >= 2) {
+                        const title = parts[0];
+                        const content = parts[1];
+                        const newsItem = {
+                            id: Date.now() + Math.random().toString(36).substr(2, 9),
+                            title: title,
+                            content: content,
+                            date: new Date()
+                        };
+                        
+                        newsData.push(newsItem);
+                        renderNewsItem(newsItem);
+                    }
+                });
+            }
+            
+            if (newsData.length === 0) {
+                newsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-newspaper"></i>
+                        <p>暂无新闻，请稍后再试</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 渲染新闻项
+        function renderNewsItem(newsItem) {
+            const newsElement = document.createElement('div');
+            newsElement.className = 'news-item';
+            newsElement.innerHTML = `
+                <div class="news-title">${newsItem.title}</div>
+                <div class="news-content">${newsItem.content}</div>
+                <div class="news-date">${formatDate(newsItem.date)}</div>
+            `;
+            
+            newsElement.addEventListener('click', function() {
+                document.querySelectorAll('.news-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
             });
             
-            // 修改密码
-            changePasswordBtn.addEventListener('click', () => {
-                if (currentPassword.value !== adminPass) {
-                    alert('当前密码错误！');
-                    return;
-                }
+            newsContainer.appendChild(newsElement);
+        }
+
+        // 加载管理新闻列表
+        function loadManageNewsList() {
+            manageNewsList.innerHTML = '';
+            
+            if (newsData.length === 0) {
+                manageNewsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-newspaper"></i>
+                        <p>暂无新闻</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            newsData.forEach(newsItem => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'manage-news-item';
+                itemElement.innerHTML = `
+                    <div class="news-title">${newsItem.title}</div>
+                    <div class="news-date">${formatDate(newsItem.date)}</div>
+                    <div class="news-actions">
+                        <button class="btn-edit btn-small" data-id="${newsItem.id}">编辑</button>
+                        <button class="btn-delete btn-small" data-id="${newsItem.id}">删除</button>
+                    </div>
+                `;
                 
-                if (newPassword.value !== confirmPassword.value) {
-                    alert('两次输入的新密码不一致！');
-                    return;
-                }
-                
-                if (newPassword.value.length < 6) {
-                    alert('新密码长度不能少于6位！');
-                    return;
-                }
-                
-                adminPass = newPassword.value;
-                
-                currentPassword.value = '';
-                newPassword.value = '';
-                confirmPassword.value = '';
-                
-                alert('密码修改成功！');
+                manageNewsList.appendChild(itemElement);
             });
             
-            // 初始加载新闻
-            loadNews();
-        });
+            // 添加编辑和删除事件
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    editNewsItem(id);
+                });
+            });
+            
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    deleteNewsItem(id);
+                });
+            });
+        }
+
+        // 提交新闻
+        async function submitNews() {
+            const title = newsTitleInput.value.trim();
+            const content = newsContentInput.value.trim();
+            
+            if (!title || !content) {
+                alert('请填写标题和内容');
+                return;
+            }
+            
+            try {
+                showLoader();
+                
+                // 格式化数据为指定格式: $标题$内容$
+                const formattedData = `$${title}$${content}$`;
+                
+                // 调用YesApi接口提交新闻
+                const response = await fetchYesApi('App.Hello.World', { 
+                    name: 'NewsApp',
+                    news_data: formattedData
+                });
+                
+                if (response && response.ret === 200) {
+                    // 清空表单
+                    newsTitleInput.value = '';
+                    newsContentInput.value = '';
+                    
+                    // 重新加载新闻
+                    loadNews();
+                    
+                    alert('新闻发布成功');
+                } else {
+                    alert('发布失败，请重试');
+                }
+            } catch (error) {
+                console.error('发布新闻出错:', error);
+                alert('网络错误，请检查连接');
+                updateConnectionStatus(false);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // 编辑新闻项
+        function editNewsItem(id) {
+            const newsItem = newsData.find(item => item.id === id);
+            if (newsItem) {
+                currentEditingId = id;
+                newsTitleInput.value = newsItem.title;
+                newsContentInput.value = newsItem.content;
+                switchTab('add');
+            }
+        }
+
+        // 删除新闻项
+        async function deleteNewsItem(id) {
+            if (!confirm('确定要删除这条新闻吗？')) {
+                return;
+            }
+            
+            try {
+                showLoader();
+                
+                // 调用YesApi接口删除新闻
+                // 这里需要根据API实际功能实现
+                const response = await fetchYesApi('App.Hello.World', { 
+                    name: 'NewsApp',
+                    action: 'delete',
+                    news_id: id
+                });
+                
+                if (response && response.ret === 200) {
+                    // 重新加载新闻
+                    loadNews();
+                    loadManageNewsList();
+                    
+                    alert('新闻删除成功');
+                } else {
+                    alert('删除失败，请重试');
+                }
+            } catch (error) {
+                console.error('删除新闻出错:', error);
+                alert('网络错误，请检查连接');
+                updateConnectionStatus(false);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // 调用YesApi接口
+        async function fetchYesApi(service, params = {}) {
+            const url = new URL(API_CONFIG.endpoint);
+            
+            // 基本参数
+            const baseParams = {
+                s: service,
+                app_key: API_CONFIG.app_key,
+                sign: generateSign(params)
+            };
+            
+            // 合并参数
+            const allParams = { ...baseParams, ...params };
+            
+            // 添加到URL
+            Object.keys(allParams).forEach(key => {
+                url.searchParams.append(key, allParams[key]);
+            });
+            
+            try {
+                const response = await fetch(url.toString());
+                return await response.json();
+            } catch (error) {
+                console.error('API请求错误:', error);
+                throw error;
+            }
+        }
+
+        // 生成签名
+        function generateSign(params) {
+            // 根据YesApi要求生成签名
+            // 这里使用MD5(参数拼接+app_secrect)的方式
+            const paramString = Object.keys(params)
+                .sort()
+                .map(key => `${key}=${params[key]}`)
+                .join('&');
+                
+            const signString = paramString + API_CONFIG.app_secrect;
+            return md5(signString);
+        }
+
+        // 简单的MD5函数（实际应用中应使用更完整的实现）
+        function md5(input) {
+            // 这是一个简化的示例，实际应用中应使用完整的MD5库
+            return 'temp_sign_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // 格式化日期
+        function formatDate(date) {
+            const d = new Date(date);
+            return `${d.getFullYear()}-${padZero(d.getMonth() + 1)}-${padZero(d.getDate())} ${padZero(d.getHours())}:${padZero(d.getMinutes())}`;
+        }
+
+        function padZero(num) {
+            return num < 10 ? '0' + num : num;
+        }
+
+        // 显示加载状态
+        function showLoader() {
+            const loader = document.createElement('div');
+            loader.className = 'loader';
+            loader.id = 'news-loader';
+            newsContainer.appendChild(loader);
+        }
+
+        // 隐藏加载状态
+        function hideLoader() {
+            const loader = document.getElementById('news-loader');
+            if (loader) {
+                loader.remove();
+            }
+        }
+
+        // 显示错误
+        function showError(message) {
+            newsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // 更新连接状态
+        function updateConnectionStatus(isOnline) {
+            const statusDot = connectionStatus.querySelector('.status-dot');
+            const statusText = connectionStatus.querySelector('.status-text');
+            
+            if (isOnline) {
+                statusDot.className = 'status-dot dot-online';
+                statusText.textContent = '已连接';
+                connectionStatus.classList.remove('status-offline');
+                connectionStatus.classList.add('status-online');
+            } else {
+                statusDot.className = 'status-dot dot-offline';
+                statusText.textContent = '连接断开';
+                connectionStatus.classList.remove('status-online');
+                connectionStatus.classList.add('status-offline');
+            }
+        }
     </script>
 </body>
 </html>
